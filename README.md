@@ -1,6 +1,6 @@
 The Wine Cellar App
 
-REST API's for
+REST APIs for
 
 1. Adding
 2. Deleting
