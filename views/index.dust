@@ -2,5 +2,22 @@
 
 {<content}
 	<h1>{title}</h1>
-	<div>The Wine Cellar Application</div>
+
+	<h2>Browse Through our Wine Collection</div>
+
+	<div class="collections">
+		{#collection}
+		<div class="collection">
+			<div>
+				<h3>{name}</h3>
+				<p>{year}</p>
+				<p>{grapes}</p>
+				<p>{country}</p>
+				<p>{region}</p>
+				<p>{description}</p>
+			</div>
+		</div>
+		{/collection}
+	</div>
+
 {/content}

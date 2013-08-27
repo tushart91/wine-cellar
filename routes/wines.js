@@ -19,42 +19,44 @@ db.open(function(err, db) {
 	}
 });
 
-exports.findById = function(req, res) {
-	var id = req.params.id;
+exports.findById = function(id, callback) {
 	console.log('Retrieving wine: ' + id);
-	db.collection('wines', function(err, collection) {
-		collection.findOne({'_id': new BSON.ObjectID(id)}, function(err, item) {
-			res.send(item);
+	db.collection('wines', function(error, collection) {
+		collection.findOne({'_id': new BSON.ObjectID(id)}, function(error, item) {
+			if (error) callback(error);
+			else callback(null, item);
 		});
 	});
 };
 
-exports.findAll = function(req, res) {
+exports.findAll = function(callback) {
 	console.log('Retrieving all wines');
-	db.collection('wines', function(err, collection) {
-		collection.find().toArray(function(err, items) {
-			res.send(items);
+	db.collection('wines', function(error, collection) {
+		collection.find().toArray(function(error, items) {
+			if (error) callback(error);
+			else callback(null, items);
 		});
 	});
 };
 
-exports.addWine = function(req, res) {
+exports.addWine = function(req, callback) {
 	var wine = req.body;
 	console.log('Adding wine: ' + JSON.stringify(wine));
 	db.collection('wines', function(err, collection) {
 		collection.insert(wine, {safe: true}, function(err, result) {
 			if(err) {
-				res.send({'error': 'An error occurred'});
+				console.log('Error inserting ' + id)
+				callback(error, 'An error has occurred');
 			}
 			else {
 				console.log('Success: ' + JSON.stringify(result[0]));
-				res.send(result[0]);
+				callback(null, 'successfully inserted');
 			}
 		});
 	});
 };
 
-exports.updateWine = function(req, res) {
+exports.updateWine = function(req, callback) {
 	var id = req.params.id;
 	var wine = req.body;
 	console.log('Updating wine: ' + JSON.stringify(wine));
@@ -62,27 +64,27 @@ exports.updateWine = function(req, res) {
 		collection.update({'_id': new BSON.ObjectID(id)}, wine, {safe: true}, function(err, result) {
 			if(err) {
 				console.log('Error updating ' + id)
-				res.send({'error' : 'An error has occurred'});
+				callback(err, 'An error has occurred');
 			}
 			else {
 				console.log('Success : ' + JSON.stringify(result[0]));
-				res.send(wine);
+				callback(null,'successfully inserted');
 			}
 		});
 	});
 };
 
-exports.deleteWine = function(req,res) {
+exports.deleteWine = function(req, callback) {
 	var id = req.params.id;
 	console.log('Deleting Wine: ' + id);
 	db.collection('wines', function(err, collection) {
 		collection.remove({'_id': new BSON.ObjectID(id)}, {safe: true}, function(err, result) {
 			if(err) {
 				console.log('Error removeing ' + id);
-				res.send({'error': 'An error has occurred'});
+				callback(error,'An error has occurred');
 			} else {
 				console.log('Success: ' + JSON.stringify(result[0]));
-				res.send(result[0]);
+				callback(null, 'successfully deleted');
 			}
 		});
 	});
